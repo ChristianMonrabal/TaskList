@@ -24,23 +24,25 @@ function loadTasks() {
 
 function saveTasks() {
     const tasks = Array.from(document.querySelectorAll('li')).map(li => ({
+        id: li.id,
         text: li.querySelector('.task-text').textContent,
         datetime: li.querySelector('.task-datetime').value,
         priority: li.classList.contains('low-priority') ? 'Low' : 
-        li.classList.contains('medium-priority') ? 'Medium' : 'High',
+                   li.classList.contains('medium-priority') ? 'Medium' : 'High',
         completed: li.querySelector('.task-text').classList.contains('completed'),
-        column: li.parentElement.id
+        column: li.closest('ul').id
     }));
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 function addTaskToDOM(task) {
     const li = document.createElement('li');
+    li.id = task.id || `task-${Date.now()}`; // Generar un ID único si no existe
     li.classList.add(`${task.priority.toLowerCase()}-priority`);
     li.setAttribute('draggable', true);
-    li.dataset.column = task.column || 'todo';
+    li.dataset.column = task.column;
     li.innerHTML = `
-        <input type="checkbox" class="task-checkbox">
+        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
         <div class="task-info">
             <span class="task-text ${task.completed ? 'completed' : ''}">${task.text}</span>
             <input type="datetime-local" class="task-datetime" value="${task.datetime}" ${task.completed ? 'disabled' : ''}>
@@ -51,10 +53,12 @@ function addTaskToDOM(task) {
     `;
 
     li.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text', e.target.innerHTML);
+        e.dataTransfer.setData('text/plain', li.id); // Usa el ID del elemento
+        e.target.classList.add('dragging');
     });
 
-    li.addEventListener('dragend', () => {
+    li.addEventListener('dragend', (e) => {
+        e.target.classList.remove('dragging');
         saveTasks();
         updateCountdowns();
     });
@@ -76,16 +80,20 @@ function addTaskToDOM(task) {
         editTaskInput.value = li.querySelector('.task-text').textContent;
         editTaskDatetime.value = li.querySelector('.task-datetime').value;
         editTaskPriority.value = li.classList.contains('low-priority') ? 'Low' :
-                                li.classList.contains('medium-priority') ? 'Medium' : 'High';
+                                 li.classList.contains('medium-priority') ? 'Medium' : 'High';
         editModal.style.display = 'flex';
     });
 
     li.querySelector('.task-checkbox').addEventListener('change', () => {
+        saveTasks();
+        updateCountdowns();
         updateDeleteAllButton();
     });
 
-    const list = document.getElementById(`${task.column}-list`);
-    list.appendChild(li);
+    const list = document.getElementById(task.column);
+    if (list) {
+        list.appendChild(li);
+    }
 }
 
 function updateCountdowns() {
@@ -120,13 +128,19 @@ function allowDrop(event) {
 
 function drop(event) {
     event.preventDefault();
-    const column = event.target.id.replace('-list', '');
-    const data = event.dataTransfer.getData('text');
-    const task = document.querySelector(`li[data-column="${column}"]`);
-    if (task) {
-        task.dataset.column = column;
-        event.target.appendChild(task);
-        saveTasks();
+    const columnId = event.target.closest('ul')?.id;
+    if (!columnId) return; // Asegúrate de que columnId esté definido
+
+    const draggedElementId = event.dataTransfer.getData('text/plain');
+    const draggedElement = document.getElementById(draggedElementId);
+
+    if (draggedElement) {
+        draggedElement.dataset.column = columnId;
+        const newList = document.getElementById(columnId);
+        if (newList) {
+            newList.appendChild(draggedElement);
+            saveTasks();
+        }
     }
 }
 
@@ -136,7 +150,13 @@ taskForm.addEventListener('submit', (e) => {
     const taskDate = taskDatetime.value;
     const taskPriorityValue = taskPriority.value;
     if (taskText && taskDate) {
-        addTaskToDOM({ text: taskText, datetime: taskDate, priority: taskPriorityValue, completed: false, column: 'todo' });
+        addTaskToDOM({ 
+            text: taskText, 
+            datetime: taskDate, 
+            priority: taskPriorityValue, 
+            completed: false, 
+            column: 'todo-list' 
+        });
         taskInput.value = '';
         taskDatetime.value = '';
         saveTasks();
@@ -168,6 +188,11 @@ closeModalBtn.addEventListener('click', () => {
     editModal.style.display = 'none';
 });
 
-setInterval(updateCountdowns, 60000); // Actualizar cada minuto
+setInterval(updateCountdowns, 60000);
 
 loadTasks();
+
+document.querySelectorAll('ul').forEach(ul => {
+    ul.addEventListener('dragover', allowDrop);
+    ul.addEventListener('drop', drop);
+});
