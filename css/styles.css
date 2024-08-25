@@ -51,19 +51,27 @@ input[type="text"]:focus, input[type="datetime-local"]:focus, select:focus {
     border-color: #3498db;
 }
 
-button {
+.add {
     padding: 0.75rem;
     border: none;
     border-radius: 6px;
-    background-color: #3498db;
+    background-color: black;
     color: white;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 30%;
+    margin-left: 35%;
 }
 
-button:hover {
-    background-color: #2980b9;
+button {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background-color: black;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
 }
 
 button:active {
@@ -113,7 +121,6 @@ li {
     background-color: inherit; /* Asegura que el fondo cubra todo el li */
     box-sizing: border-box; /* Incluye padding y border en el tamaño total */
 }
-
 
 li.low-priority {
     background-color: #d4edda; /* Green */
@@ -166,7 +173,7 @@ li:hover {
 
 .countdown-time {
     font-size: 0.9rem;
-    color: #7f8c8d;
+    color: black;
     margin-left: 1rem;
 }
 
@@ -177,7 +184,6 @@ li:hover {
 
 .task-checkbox {
     margin-right: 1rem;
-    accent-color: #3498db;
 }
 
 .task-actions {
@@ -287,4 +293,132 @@ li:hover {
 
 .modal-header button:hover {
     background: #c0392b;
+}
+
+/* General Dark Mode */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* Container Dark Mode */
+body.dark-mode .container {
+    background-color: #1e1e1e;
+    border: 1px solid #333333;
+
+}
+
+/* Títulos Dark Mode */
+body.dark-mode h1, 
+body.dark-mode h2 {
+    color: #ffffff;
+}
+
+/* Inputs y Selects Dark Mode */
+body.dark-mode input[type="text"], 
+body.dark-mode input[type="datetime-local"], 
+body.dark-mode select {
+    background-color: inherit;
+    color: white;
+    border: 1px solid #555555;
+}
+
+body.dark-mode input[type="text"]:focus, 
+body.dark-mode input[type="datetime-local"]:focus, 
+body.dark-mode select:focus {
+    border-color: #888888;
+}
+
+/* Botones Dark Mode */
+body.dark-mode button {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #000000; /* Texto negro */
+    border: 1px solid #ffffff; /* Borde blanco */
+}
+
+body.dark-mode button:hover {
+    background-color: #f0f0f0; /* Blanco ligeramente más oscuro */
+}
+
+body.dark-mode button:active {
+    transform: scale(0.98);
+}
+
+/* Columnas Dark Mode */
+body.dark-mode .column {
+    background-color: #1e1e1e;
+    border: 1px solid #ffffff; /* Bordes blancos */
+}
+
+/* Lista de tareas Dark Mode */
+body.dark-mode li {
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+    border: 1px solid #444444;
+}
+
+body.dark-mode li.low-priority {
+    background-color: #2e8b57; /* Verde */
+}
+
+body.dark-mode li.medium-priority {
+    background-color: #daa520; /* Amarillo */
+}
+
+body.dark-mode li.high-priority {
+    background-color: #dc143c; /* Rojo */
+}
+
+/* Tareas completadas Dark Mode */
+body.dark-mode .task-text.completed {
+    color: #777777;
+}
+
+/* Botones de acción de tareas Dark Mode */
+body.dark-mode .task-actions button {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #000000; /* Texto negro */
+    border: 1px solid #ffffff; /* Borde blanco */
+}
+
+body.dark-mode .task-actions button:hover {
+    background-color: #f0f0f0; /* Blanco ligeramente más oscuro */
+}
+
+/* Botón eliminar todo Dark Mode */
+body.dark-mode .delete-all-btn {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #000000; /* Texto negro */
+    border: 1px solid #ffffff; /* Borde blanco */
+}
+
+body.dark-mode .delete-all-btn:hover {
+    background-color: #f0f0f0; /* Blanco ligeramente más oscuro */
+}
+
+/* Modal Dark Mode */
+body.dark-mode .modal-content {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+body.dark-mode .modal-header button {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #000000; /* Texto negro */
+}
+
+body.dark-mode .modal-header button:hover {
+    background-color: #f0f0f0; /* Blanco ligeramente más oscuro */
+}
+
+/* Media Query para dispositivos móviles */
+@media (max-width: 768px) {
+    .columns {
+        flex-direction: column; /* Cambia a columna en dispositivos móviles */
+    }
+
+    .column {
+        width: 100%; /* Ocupa el 100% del ancho en dispositivos móviles */
+        margin-bottom: 1rem; /* Espacio entre las columnas */
+    }
 }
