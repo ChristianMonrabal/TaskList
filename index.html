@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <form id="task-form">
+            <div class="form-group">
+                <input type="text" id="task-input" placeholder="Add a new task" required>
+                <select id="task-priority" required>
+                    <option value="High">High Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="Low">Low Priority</option>
+                </select>
+            </div>
+            <input type="datetime-local" id="task-datetime" required>
+            <button type="submit">Add Task</button>
+        </form>
+        <div class="columns">
+            <div id="todo" class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2>To Do</h2>
+                <ul id="todo-list"></ul>
+            </div>
+            <div id="in-progress" class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2>In Progress</h2>
+                <ul id="in-progress-list"></ul>
+            </div>
+            <div id="done" class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2>Done</h2>
+                <ul id="done-list"></ul>
+            </div>
+        </div>
+        <button class="delete-all-btn" id="delete-all-btn" disabled>Delete Selected Tasks</button>
+    </div>
+
+    <!-- Modal for Editing Task -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Task</h2>
+                <button id="close-modal-btn">&times;</button>
+            </div>
+            <form id="edit-task-form">
+                <div class="form-group">
+                    <input type="text" id="edit-task-input" placeholder="Task name" required>
+                    <select id="edit-task-priority" required>
+                        <option value="High">High Priority</option>
+                        <option value="Medium">Medium Priority</option>
+                        <option value="Low">Low Priority</option>
+                    </select>
+                </div>
+                <input type="datetime-local" id="edit-task-datetime" required>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/main.js"></script>
+</body>
+</html>
