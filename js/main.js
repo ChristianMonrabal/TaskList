@@ -12,20 +12,23 @@ const editTaskForm = document.getElementById('edit-task-form');
 const editTaskInput = document.getElementById('edit-task-input');
 const editTaskDatetime = document.getElementById('edit-task-datetime');
 const editTaskPriority = document.getElementById('edit-task-priority');
+const editTaskColumn = document.getElementById('edit-task-column');
 const closeModalBtn = document.getElementById('close-modal-btn');
 
 let currentTaskElement = null;
 
 function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    tasks.forEach(task => addTaskToDOM(task));
-    updateCountdowns();
+    tasks.forEach(task => {
+        addTaskToDOM(task);
+    });
+    updateDeleteAllButton();
 }
 
 function saveTasks() {
     const tasks = Array.from(document.querySelectorAll('li')).map(li => ({
         id: li.id,
-        text: li.querySelector('.task-text').textContent,
+        text: li.querySelector('.task-text').textContent.trim(),
         datetime: li.querySelector('.task-datetime').value,
         priority: li.classList.contains('low-priority') ? 'Low' : 
                 li.classList.contains('medium-priority') ? 'Medium' : 'High',
@@ -37,83 +40,64 @@ function saveTasks() {
 
 function addTaskToDOM(task) {
     const li = document.createElement('li');
-    li.id = task.id || `task-${Date.now()}`; // Generar un ID único si no existe
+    li.id = task.id || `task-${Date.now()}`;
     li.classList.add(`${task.priority.toLowerCase()}-priority`);
     li.setAttribute('draggable', true);
     li.dataset.column = task.column;
+
     li.innerHTML = `
         <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
         <div class="task-info">
-            <span class="task-text ${task.completed ? 'completed' : ''}">${task.text}</span>
-            <input type="datetime-local" class="task-datetime" value="${task.datetime}" ${task.completed ? 'disabled' : ''}>
-            <span class="countdown-time"></span>
+            <span class="task-text ${task.completed ? 'completed' : ''}">${task.text || 'Unnamed Task'}</span>
+            <input type="datetime-local" class="task-datetime" value="${task.datetime}">
         </div>
-        <button class="edit">Edit</button>
-        <button class="remove">Delete</button>
+        <div class="task-actions">
+            <button class="edit">Edit</button>
+            <button class="remove">Delete</button>
+        </div>
     `;
 
     li.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', li.id); // Usa el ID del elemento
+        e.dataTransfer.setData('text/plain', li.id);
         e.target.classList.add('dragging');
     });
 
     li.addEventListener('dragend', (e) => {
         e.target.classList.remove('dragging');
         saveTasks();
-        updateCountdowns();
     });
 
     li.querySelector('.task-text').addEventListener('click', () => {
         li.querySelector('.task-text').classList.toggle('completed');
         saveTasks();
-        updateCountdowns();
     });
 
     li.querySelector('.remove').addEventListener('click', () => {
         li.remove();
         saveTasks();
-        updateCountdowns();
     });
 
     li.querySelector('.edit').addEventListener('click', () => {
         currentTaskElement = li;
-        editTaskInput.value = li.querySelector('.task-text').textContent;
+        editTaskInput.value = li.querySelector('.task-text').textContent.trim();
         editTaskDatetime.value = li.querySelector('.task-datetime').value;
         editTaskPriority.value = li.classList.contains('low-priority') ? 'Low' :
                                  li.classList.contains('medium-priority') ? 'Medium' : 'High';
+        editTaskColumn.value = li.dataset.column;
         editModal.style.display = 'flex';
     });
 
     li.querySelector('.task-checkbox').addEventListener('change', () => {
         saveTasks();
-        updateCountdowns();
         updateDeleteAllButton();
     });
 
     const list = document.getElementById(task.column);
     if (list) {
         list.appendChild(li);
+    } else {
+        console.warn(`Column ${task.column} not found`);
     }
-}
-
-function updateCountdowns() {
-    const now = new Date();
-    document.querySelectorAll('li').forEach(li => {
-        const datetime = new Date(li.querySelector('.task-datetime').value);
-        const span = li.querySelector('.countdown-time');
-        if (datetime < now) {
-            span.textContent = 'Time is up!';
-            span.classList.add('time-up');
-        } else {
-            const diff = datetime - now;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            span.textContent = `Time remaining: ${days}d ${hours}h ${minutes}m`;
-            span.classList.remove('time-up');
-        }
-    });
-    updateDeleteAllButton();
 }
 
 function updateDeleteAllButton() {
@@ -129,7 +113,7 @@ function allowDrop(event) {
 function drop(event) {
     event.preventDefault();
     const columnId = event.target.closest('ul')?.id;
-    if (!columnId) return; // Asegúrate de que columnId esté definido
+    if (!columnId) return;
 
     const draggedElementId = event.dataTransfer.getData('text/plain');
     const draggedElement = document.getElementById(draggedElementId);
@@ -140,6 +124,8 @@ function drop(event) {
         if (newList) {
             newList.appendChild(draggedElement);
             saveTasks();
+        } else {
+            console.warn(`List ${columnId} not found`);
         }
     }
 }
@@ -160,26 +146,33 @@ taskForm.addEventListener('submit', (e) => {
         taskInput.value = '';
         taskDatetime.value = '';
         saveTasks();
-        updateCountdowns();
     }
 });
 
 deleteAllBtn.addEventListener('click', () => {
     document.querySelectorAll('.task-checkbox:checked').forEach(cb => cb.parentElement.remove());
     saveTasks();
-    updateCountdowns();
 });
 
 editTaskForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if (currentTaskElement) {
-        currentTaskElement.querySelector('.task-text').textContent = editTaskInput.value;
+        currentTaskElement.querySelector('.task-text').textContent = editTaskInput.value.trim();
         currentTaskElement.querySelector('.task-datetime').value = editTaskDatetime.value;
         currentTaskElement.classList.remove('low-priority', 'medium-priority', 'high-priority');
         const priorityClass = editTaskPriority.value.toLowerCase() + '-priority';
         currentTaskElement.classList.add(priorityClass);
+
+        const newColumnId = editTaskColumn.value;
+        const newList = document.getElementById(newColumnId);
+        if (newList) {
+            newList.appendChild(currentTaskElement);
+            currentTaskElement.dataset.column = newColumnId;
+        } else {
+            console.warn(`List ${newColumnId} not found`);
+        }
+        
         saveTasks();
-        updateCountdowns();
         editModal.style.display = 'none';
     }
 });
@@ -187,8 +180,6 @@ editTaskForm.addEventListener('submit', (e) => {
 closeModalBtn.addEventListener('click', () => {
     editModal.style.display = 'none';
 });
-
-setInterval(updateCountdowns, 60000);
 
 loadTasks();
 

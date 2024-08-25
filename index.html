@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>To Do List</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <link rel="shortcut icon" href="./img/icon.png" type="image/x-icon">
 </head>
 <body>
     <div class="container">
-        <h1>To-Do List</h1>
+        <h1>To Do List</h1>
         <form id="task-form">
             <div class="form-group">
                 <input type="text" id="task-input" placeholder="Add a new task" required>
@@ -52,6 +53,12 @@
                         <option value="High">High Priority</option>
                         <option value="Medium">Medium Priority</option>
                         <option value="Low">Low Priority</option>
+                    </select>
+                    <br>
+                    <select id="edit-task-column" required>
+                        <option value="todo-list">To Do</option>
+                        <option value="in-progress-list">In Progress</option>
+                        <option value="done-list">Done</option>
                     </select>
                 </div>
                 <input type="datetime-local" id="edit-task-datetime" required>

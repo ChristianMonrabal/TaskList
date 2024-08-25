@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 95%; /* Ampliado para ocupar más porcentaje de la página */
     margin: 3rem auto;
     padding: 2rem;
     background: #ffffff;
@@ -33,6 +33,7 @@ form {
 
 .form-group {
     display: flex;
+    flex-direction: column; /* Cambiado a columna para mejor ajuste en el modal */
     gap: 1rem;
 }
 
@@ -97,7 +98,7 @@ ul {
 }
 
 li {
-    padding: 1rem;
+    padding: 0.75rem; /* Espaciado dentro de la tarea */
     border-radius: 6px;
     margin-bottom: 1rem;
     border: 1px solid #ddd;
@@ -107,7 +108,12 @@ li {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
     cursor: pointer;
+    width: 100%; /* Asegura que ocupe todo el ancho del contenedor de columna */
+    max-width: 495px; /* Ajusta el ancho máximo de las tareas */
+    background-color: inherit; /* Asegura que el fondo cubra todo el li */
+    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
 }
+
 
 li.low-priority {
     background-color: #d4edda; /* Green */
@@ -134,13 +140,18 @@ li:hover {
     align-items: center;
     flex: 1;
     gap: 1rem;
+    width: calc(100% - 120px); /* Ajusta el ancho para dejar espacio para los botones */
+    overflow: hidden; /* Evita el desbordamiento */
 }
 
 .task-text {
-    font-size: 1.1rem;
+    font-size: 1rem; /* Tamaño de fuente reducido */
     color: #2c3e50;
     cursor: pointer;
     flex: 1;
+    white-space: nowrap; /* Evita el salto de línea en el texto */
+    overflow: hidden; /* Oculta el desbordamiento de texto */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos cuando el texto es largo */
 }
 
 .task-text.completed {
@@ -169,15 +180,24 @@ li:hover {
     accent-color: #3498db;
 }
 
-.edit, .remove {
+.task-actions {
+    display: flex;
+    flex-direction: column; /* Apila los botones verticalmente */
+    gap: 0.5rem; /* Espacio entre los botones */
+    margin-left: 1rem; /* Espacio entre el texto y los botones */
+    background-color: inherit; /* Asegura que el fondo de los botones coincida con el fondo de la tarea */
+}
+
+.task-actions button {
     border: none;
     color: white;
     cursor: pointer;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     border-radius: 6px;
     font-size: 0.9rem;
-    margin-left: 0.5rem;
+    text-align: center; /* Centra el texto del botón */
     transition: background-color 0.3s ease;
+    width: 100%; /* Ocupa todo el ancho del contenedor */
 }
 
 .edit {
@@ -236,8 +256,9 @@ li:hover {
     background: #fff;
     padding: 2rem;
     border-radius: 8px;
-    width: 80%;
-    max-width: 400px;
+    width: 90%; /* Ampliado para mejor ajuste */
+    max-width: 600px; /* Ampliado para acomodar contenido */
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
 }
 
 .modal-header {
