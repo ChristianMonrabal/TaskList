@@ -28,7 +28,7 @@ function saveTasks() {
         text: li.querySelector('.task-text').textContent,
         datetime: li.querySelector('.task-datetime').value,
         priority: li.classList.contains('low-priority') ? 'Low' : 
-                   li.classList.contains('medium-priority') ? 'Medium' : 'High',
+                li.classList.contains('medium-priority') ? 'Medium' : 'High',
         completed: li.querySelector('.task-text').classList.contains('completed'),
         column: li.closest('ul').id
     }));
